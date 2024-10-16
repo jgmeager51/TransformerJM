@@ -1,11 +1,12 @@
 import torch
 import numpy as np
 import warnings
+import os
 
 import rpy2.robjects as ro
 import rpy2.robjects.numpy2ri
 rpy2.robjects.numpy2ri.activate()
-ro.r.source("PATH/AUC_BS.r")
+ro.r.source("Models/AUC_BS.r")
 AUC_R = ro.globalenv['AUC']
 Brier_R = ro.globalenv['Brier']
 
@@ -33,3 +34,6 @@ def MSE(y, yhat):
         mse = np.nanmean(mse, axis=1) # average over time
     mse = np.nanmean(mse, axis=0) # average over subj
     return mse
+
+
+
