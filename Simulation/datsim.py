@@ -79,9 +79,11 @@ def simulate_JM_base2(I, obstime, miss_rate=0.1, opt="none", seed=None):
     #print(time)
     J = len(obstime) 
     subj_obstime = np.tile(obstime, reps=I)
+    print(betat * subj_obstime)
     pred_time = np.tile(obstime, reps=I)
     mean_long = np.repeat(mean_long, repeats=J, axis=0)
     eta_long = np.repeat(eta_long, repeats=J, axis=0)
+    print(eta_long)
     long_err = np.random.normal(0, 1, size=I*J)
     Y = eta_long + betat * subj_obstime + long_err#[:, np.newaxis]
     Y_pred = eta_long + betat * pred_time + long_err#[:, np.newaxis]
@@ -104,3 +106,5 @@ data = simulate_JM_base2(1000, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], seed=1)
 print(data.head())
 print(np.sum(data.loc[:,"event"]))
 print(np.mean(data.loc[:,"time"]))
+
+print(np.mean(data.loc[:,"Y"]))
