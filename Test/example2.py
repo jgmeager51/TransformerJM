@@ -35,7 +35,7 @@ n_sim = 1
 I = 1000
 obstime = [0,1,2,3,4,5,6,7,8,9,10]
 landmark_times = [1,2,3,4,5]
-pred_windows = [1,2,3]
+pred_windows = [1,2,3,4,5,6]
 scenario = "none" # ["none", "interaction", "nonph"]
 
 
@@ -91,7 +91,7 @@ for epoch in range(n_epoch):
         batch_base = batch_base[:,:-1,:]
         batch_mask_inp = get_mask(batch_mask[:,:-1])
         batch_mask_out = batch_mask[:,1:].unsqueeze(2)
-
+        
         yhat_long, yhat_surv = model(batch_long_inp, batch_base, batch_mask_inp,
                      obs_time[:,:-1], obs_time[:,1:])
         loss1 = long_loss(yhat_long, batch_long_out, batch_mask_out)
