@@ -32,7 +32,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 # Global options
 n_sim = 1
-I = 1000
+I = 5000
 obstime = [0,1,2,3,4,5,6,7,8,9,10]
 landmark_times = [1,2,3,4,5]
 pred_windows = [1,2,3,4,5,6]
@@ -44,6 +44,9 @@ data = data_all[data_all.obstime <= data_all.time]
 # print(data.shape)
 #(7647, 15)
 
+data_r = pd.read_csv("C:/Users/jgmea/research/transf/TransformerJM/Test/r_data.csv")
+
+data_r.head()
 ## split train/test
 random_id = range(I) #np.random.permutation(range(I))
 train_id = random_id[0:int(0.7*I)]
@@ -91,10 +94,11 @@ for epoch in range(n_epoch):
         batch_base = batch_base[:,:-1,:]
         batch_mask_inp = get_mask(batch_mask[:,:-1])
         batch_mask_out = batch_mask[:,1:].unsqueeze(2)
-        
+
         yhat_long, yhat_surv = model(batch_long_inp, batch_base, batch_mask_inp,
                      obs_time[:,:-1], obs_time[:,1:])
         loss1 = long_loss(yhat_long, batch_long_out, batch_mask_out)
+        #print(loss1)
         loss2 = surv_loss(yhat_surv, batch_mask, batch_e)
         loss = loss1 + loss2
         loss.backward()
@@ -103,13 +107,13 @@ for epoch in range(n_epoch):
     loss_values.append(running_loss.tolist())
 
 
-plt.plot((loss_values-np.min(loss_values))/(np.max(loss_values)-np.min(loss_values)), 'b-')
+plt.plot((loss_values-np.min(loss_values))/(np.max(loss_values)-np.min(loss_values)), 'b-') 
 plt.xlabel('Iterations')
 plt.ylabel('Normalized Loss')
 plt.title('Training Loss')
 
 # Save the plot to a file
-plt.savefig("plot2.png")  # Save as PNG file
+plt.savefig("plot1.png")  # Save as PNG file
 
 
 landmark_times

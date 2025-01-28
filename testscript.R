@@ -6,7 +6,7 @@ library(JMbayes)
 
 
 
-surv_pred <- read.csv("C:/Users/jgmea/research/transf/TransformerJM/Test/surv_pred1.csv",header=FALSE)
+surv_pred <- read.csv("C:/Users/jgmea/research/transf/TransformerJM/surv_pred1.csv",header=FALSE)
 testdata <- read.csv("C:/Users/jgmea/research/transf/TransformerJM/Test/test_data1.csv")
 traindata <- read.csv("C:/Users/jgmea/research/transf/TransformerJM/Test/train_data1.csv")
 tmpdata <- read.csv("C:/Users/jgmea/research/transf/TransformerJM/Test/tmp_data1.csv")
@@ -65,4 +65,16 @@ jmfit <- jointModelBayes(long,cox.1,"obstime")
 #jmtr<- jm(cox.1,long, time_var = "obstime", n_chains = 1L)
 
 
-traceplot(jmfit)
+mcs <- as.mcmc(jmfit$mcmc)
+
+plot(mcs$betas[,1],type="l",ylab="Intercept")
+plot(mcs$betas[,2],type="l",ylab="X1")
+plot(mcs$betas[,3],type="l",ylab="obstime")
+
+plot(mcs$sigma,type="l",ylab="Sigma")
+
+plot(mcs$alphas,type="l",ylab="alpha");abline(h=mean(mcs$alphas),col="blue",lwd=2)
+mean(mcs$alphas)
+plot(mcs$gammas,type="l",ylab="alpha")
+traceplot(mcs$betas)
+library(JMbayes)
