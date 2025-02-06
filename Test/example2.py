@@ -69,9 +69,9 @@ test_data = data_r[data_r["id"].isin(test_id)]
 
 
 ## Scale data using Min-Max Scaler
-minmax_scaler = MinMaxScaler(feature_range=(-1,1))
-train_data.loc[:,["Y"]] = minmax_scaler.fit_transform(train_data.loc[:,["Y"]])
-test_data.loc[:,["Y"]] = minmax_scaler.transform(test_data.loc[:,["Y"]])
+#minmax_scaler = MinMaxScaler(feature_range=(-1,1))
+#train_data.loc[:,["Y"]] = minmax_scaler.fit_transform(train_data.loc[:,["Y"]])
+#test_data.loc[:,["Y"]] = minmax_scaler.transform(test_data.loc[:,["Y"]])
 
 ## Train model
 torch.manual_seed(0)
@@ -217,7 +217,7 @@ print(type(t_tmp))
 tmp_data.to_csv("tmp_data1.csv", index=False)
 train_data.to_csv("train_data1.csv", index=False)
 test_data.to_csv("test_data1.csv", index=False)
-np.savetxt("surv_pred1.csv", surv_pred, delimiter = ",")
+np.savetxt("surv_pred_1.csv", surv_pred, delimiter = ",")
 #surv_pred.to_csv(, index=False)
 #long_pred.to_csv("long_pred.csv", index=False)
 #np.savetxt("long_pred.csv", long_pred, delimiter = ",")
