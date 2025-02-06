@@ -1,3 +1,5 @@
+# Sys.setenv(RETICULATE_PYTHON = "/Users/feiz/miniforge3/envs/stat_207/bin/python3.10")
+
 import numpy as np
 import pandas as pd
 import scipy.integrate as integrate
