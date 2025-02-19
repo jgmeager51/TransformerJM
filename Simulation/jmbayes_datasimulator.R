@@ -194,17 +194,17 @@ for (i in 1:3){
   toc()
 }
 
-tic()
-jmfit2 <- jointModelBayes(long2, cox.2, timeVar = "obstime")
-toc()
+#tic()
+#jmfit2 <- jointModelBayes(long2, cox.2, timeVar = "obstime")
+#toc()
 
 summary(jmfit2)
 
-library(coda)
-mcmc_list <- lapply(chains, function(x) as.mcmc(x$mcmc))
-mcmc_list <- as.mcmc.list(mcmc_list)
+#library(coda)
+#mcmc_list <- lapply(chains, function(x) as.mcmc(x$mcmc))
+#mcmc_list <- as.mcmc.list(mcmc_list)
 
-traceplot(mcmc_list)
+#traceplot(mcmc_list)
 
 
 plot(chains[[1]],which="trace", param = c("betas", "sigma", "D", "gammas", "alphas"))
