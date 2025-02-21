@@ -54,8 +54,8 @@ data_r.shape
 
 ## split train/test
 random_id = range(I) #np.random.permutation(range(I))
-train_id = random_id[0:int(0.7*I)]
-test_id = random_id[int(0.7*I):I]
+train_id = random_id[0:int(0.8*I)]
+test_id = random_id[int(0.8*I):I]
 
 #training data from TransformerJM datsim.py
 #train_data = data[data["id"].isin(train_id)]
@@ -83,7 +83,11 @@ model = Transformer(d_long=1, d_base=1, d_model=32, nhead=4,
 model.apply(init_weights)
 model = model.train()
 
+<<<<<<< Updated upstream
 optimizer = torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)
+=======
+optimizer = torch.optim.Adam(model.parameters(), lr=0.02, betas=(0.9, 0.98), eps=1e-9)
+>>>>>>> Stashed changes
 scheduler = get_std_opt(optimizer, d_model=32, warmup_steps=200, factor=0.2)
 
 
@@ -91,8 +95,20 @@ n_epoch = 25
 batch_size = 32   #####
 
 loss_values = []
+<<<<<<< Updated upstream
+=======
+
+val_loss_values = []
+
+train_mse =[]
+train_nlik = []
+val_loss_values = []
+
+>>>>>>> Stashed changes
 for epoch in range(n_epoch):
     running_loss = 0
+    running_mse = 0
+    running_nlik = 0
     train_id = np.random.permutation(train_id)
     print(epoch)
     for batch in range(0, len(train_id), batch_size):
@@ -119,16 +135,80 @@ for epoch in range(n_epoch):
         loss.backward()
         scheduler.step()
         running_loss += loss
+        running_mse += loss1
+        running_nlik += loss2
     loss_values.append(running_loss.tolist())
+<<<<<<< Updated upstream
 
 
 plt.plot((loss_values-np.min(loss_values))/(np.max(loss_values)-np.min(loss_values)), 'b-') 
+=======
+    train_mse.append(running_mse.tolist())
+    train_nlik.append(running_nlik.tolist())
+    
+    test_id = np.random.permutation(test_id)
+    running_val_loss = 0
+
+
+
+    test_id = np.random.permutation(test_id)
+    running_val_loss = 0
+
+    with torch.no_grad():  # Disable gradient calculation
+        for batch in range(0, len(test_id), batch_size):
+            # Prepare validation batch data
+            indices = test_id[batch:batch + batch_size]
+            batch_data = test_data[test_data["id"].isin(indices)]
+            batch_long, batch_base, batch_mask, batch_e, batch_t, obs_time = get_tensors(
+                batch_data.copy(), long=["Y"], base=["X1"])
+            batch_long_inp = batch_long[:, :-1, :]
+            batch_long_out = batch_long[:, 1:, :]
+            batch_base = batch_base[:, :-1, :]
+            batch_mask_inp = get_mask(batch_mask[:, :-1])
+            batch_mask_out = batch_mask[:, 1:].unsqueeze(2)
+
+            # Forward pass
+            yhat_long, yhat_surv = model(batch_long_inp, batch_base, batch_mask_inp, obs_time[:, :-1], obs_time[:, 1:])
+
+            # Compute validation loss
+            val_loss1 = long_loss(yhat_long, batch_long_out, batch_mask_out)
+            val_loss2 = surv_loss(yhat_surv, batch_mask, batch_e)
+            val_loss = val_loss1 + val_loss2
+           # val_loss.backward()
+           # scheduler.step()
+
+            # Accumulate validation loss
+            running_val_loss += val_loss
+    val_loss_values.append(running_val_loss.tolist())
+
+
+
+
+print(time.time() - start)
+
+plt.figure(0)
+plt.plot(loss_values, 'b-', label='Training Loss')
+plt.plot(val_loss_values, 'r-', label='Validation Loss') 
+plt.legend(loc='upper right')
+>>>>>>> Stashed changes
 plt.xlabel('Iterations')
-plt.ylabel('Normalized Loss')
-plt.title('Training Loss')
+plt.ylabel('Loss')
+plt.title('Training and Validation Loss')
 print(loss_values)
+print(train_mse)
+print(train_nlik)
 # Save the plot to a file
-plt.savefig("train_loss.png")  # Save as PNG file
+plt.savefig("loss.png")  # Save as PNG file
+
+plt.figure(1)
+
+plt.plot(train_mse, 'b-',label='Training MSE')
+plt.plot(train_nlik, 'r-',label='Training Nlik')    
+plt.legend(loc='upper right')
+plt.xlabel('Iterations')  
+plt.ylabel('Loss')
+plt.title('Training MSE and Negative Log-liklihood')
+plt.savefig("train_mse_nlik.png")  # Save as PNG file  
 
 
 landmark_times
@@ -159,7 +239,7 @@ surv_pred = torch.zeros(long_0.shape[0],0,1)
 model = model.eval()
 
 
-
+bigtime = time.time()
 
 for pt in pred_times:
     dec_base = base_0.expand([-1,dec_long.shape[1],-1])
@@ -191,7 +271,7 @@ long_pred = long_pred.detach().numpy()
 surv_pred = surv_pred.squeeze().detach().numpy()
 surv_pred = surv_pred.cumprod(axis=1)
 
-
+print(time.time() - bigtime)
 print(surv_pred.shape)
 
 print("surv_pred shape:", surv_pred.shape)
@@ -217,22 +297,22 @@ print("long_pred type:", type(long_pred), long_pred.shape)
 print(type(e_tmp))
 print(type(t_tmp))
 
-tmp_data.to_csv("tmp_data1.csv", index=False)
-train_data.to_csv("train_data1.csv", index=False)
-test_data.to_csv("test_data1.csv", index=False)
-np.savetxt("surv_pred_1.csv", surv_pred, delimiter = ",")
+tmp_data.to_csv("C:/Users/jgmea/OneDrive/Desktop/research/tmp_data1.csv", index=False)
+train_data.to_csv("C:/Users/jgmea/OneDrive/Desktop/research/train_data1.csv", index=False)
+test_data.to_csv("C:/Users/jgmea/OneDrive/Desktop/research/test_data1.csv", index=False)
+np.savetxt("C:/Users/jgmea/OneDrive/Desktop/research/surv_pred_1.csv", surv_pred, delimiter = ",")
 #surv_pred.to_csv(, index=False)
 #long_pred.to_csv("long_pred.csv", index=False)
 #np.savetxt("long_pred.csv", long_pred, delimiter = ",")
 event_tmp = pd.DataFrame(e_tmp.numpy().astype(int))
-event_tmp.to_csv("event_tmp1.csv", index=False)
+event_tmp.to_csv("C:/Users/jgmea/OneDrive/Desktop/research/event_tmp1.csv", index=False)
 time_tmp = pd.DataFrame(t_tmp.numpy())
-time_tmp.to_csv("time_tmp1.csv", index=False)
+time_tmp.to_csv("C:/Users/jgmea/OneDrive/Desktop/research/time_tmp1.csv", index=False)
 
 event_train = pd.DataFrame(e_train.numpy().astype(int))
-event_train.to_csv("event_train1.csv", index=False)
+event_train.to_csv("C:/Users/jgmea/OneDrive/Desktop/research/event_train1.csv", index=False)
 time_train = pd.DataFrame(t_train.numpy())
-time_train.to_csv("time_train1.csv", index=False)
+time_train.to_csv("C:/Users/jgmea/OneDrive/Desktop/research/time_train1.csv", index=False)
 
 
 
@@ -240,4 +320,40 @@ time_train.to_csv("time_train1.csv", index=False)
 
 
 
+<<<<<<< Updated upstream
+=======
+
+#             # Forward pass
+#             yhat_long, yhat_surv = model(batch_long_inp, batch_base, batch_mask_inp, obs_time[:, :-1], obs_time[:, 1:])
+
+#             # Compute validation loss
+#             val_loss1 = long_loss(yhat_long, batch_long_out, batch_mask_out)
+#             val_loss2 = surv_loss(yhat_surv, batch_mask, batch_e)
+#             val_loss = val_loss1 + val_loss2
+#            # val_loss.backward()
+#            # scheduler.step()
+
+#             # Accumulate validation loss
+#             running_val_loss += val_loss
+#     val_loss_values.append(running_val_loss.tolist())
+
+# Plot validation loss
+
+#plt.plot((val_loss_values-np.min(val_loss_values))/(np.max(val_loss_values)-np.min(val_loss_values)), 'r-') 
+#plt.xlabel('Iterations')
+#plt.ylabel('Normalized  Loss')
+#plt.title('Training and Validation Loss')
+print(val_loss_values)
+#plt.savefig("val_loss.png")  # Save as PNG file
+
+#plt.plot((val_loss_values-np.min(val_loss_values))/(np.max(val_loss_values)-np.min(val_loss_values)), 'r-') 
+
+
+
+#plt.xlabel('Iterations')
+#plt.ylabel('Loss')
+#plt.title('Training and Validation Loss')
+#print(val_loss_values)
+#plt.savefig("val_loss.png")  # Save as PNG file
+>>>>>>> Stashed changes
 
