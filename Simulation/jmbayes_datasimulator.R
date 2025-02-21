@@ -2,7 +2,7 @@ library(nlme)
 library(survival)
 library(JMbayes)
 library(tictoc)
-
+library(basicMCMCplots)
 
 obstime <- seq(0,10,length=21)
 I<-5000#;opt="none"
@@ -194,6 +194,18 @@ for (i in 1:3){
   toc()
 }
 
+
+thetas1 <- cbind(chains[[1]]$mcmc$betas,chains[[1]]$mcmc$sigma,chains[[1]]$mcmc$D)
+thetas2 <- cbind(chains[[2]]$mcmc$betas,chains[[2]]$mcmc$sigma,chains[[2]]$mcmc$D)
+thetas3 <- cbind(chains[[3]]$mcmc$betas,chains[[3]]$mcmc$sigma,chains[[3]]$mcmc$D)
+
+chainsPlot(list(thetas1,thetas2,thetas3),densityplot = FALSE, legend.location = "topright",cex=1.5)
+
+etas1 <- cbind(chains[[1]]$mcmc$alphas,chains[[1]]$mcmc$gammas)
+etas2 <- cbind(chains[[2]]$mcmc$alphas,chains[[2]]$mcmc$gammas)
+etas3 <- cbind(chains[[3]]$mcmc$alphas,chains[[3]]$mcmc$gammas)
+chainsPlot(list(etas1,etas2,etas3),densityplot = FALSE, legend.location = "right",cex=1)
+
 #tic()
 #jmfit2 <- jointModelBayes(long2, cox.2, timeVar = "obstime")
 #toc()
@@ -214,9 +226,14 @@ lines(chains[[2]],which="trace",param=c("alphas"),col="blue")
 
 
 par(mfrow=c(1,1))
-plot(chains[[1]]$mcmc$betas[,1],type="l")
-lines(chains[[2]]$mcmc$betas[,1],col="blue")
-lines(chains[[3]]$mcmc$betas[,1],col="red")
+plot(chains[[1]]$mcmc$D,type="l")
+lines(chains[[2]]$mcmc$D,col="blue")
+lines(chains[[3]]$mcmc$D,col="red")
+abline(h=2.5, col="green2",lwd=2)
+legend("topright", legend = c("chain 1","chain 2", "chain 3"),col=c("black","blue","red"),lwd=2)
+
+summary(chains[[1]]$mcmc)
+
 mcs <- mcmc(jmfit2$mcmc)
 traceplot(mcs)
 
