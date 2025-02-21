@@ -7,7 +7,7 @@ from Models.MFPCA_DeepSurv.DeepSurv import DeepSurv
 from Models.MFPCA_DeepSurv.functions import (get_numpy, sortByTime, surv_loss, BreslowEstimator)
 from Models.metrics import (AUC, Brier)
 from Simulation.data_simulation_base import simulate_JM_base
-from Simulation.data_simulation_nonPH import simulate_JM_nonPH
+#from Simulation.data_simulation_nonPH import simulate_JM_nonPH
 
 import numpy as np
 import pandas as pd

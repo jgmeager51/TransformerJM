@@ -83,11 +83,7 @@ model = Transformer(d_long=1, d_base=1, d_model=32, nhead=4,
 model.apply(init_weights)
 model = model.train()
 
-<<<<<<< Updated upstream
-optimizer = torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)
-=======
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02, betas=(0.9, 0.98), eps=1e-9)
->>>>>>> Stashed changes
 scheduler = get_std_opt(optimizer, d_model=32, warmup_steps=200, factor=0.2)
 
 
@@ -95,8 +91,6 @@ n_epoch = 25
 batch_size = 32   #####
 
 loss_values = []
-<<<<<<< Updated upstream
-=======
 
 val_loss_values = []
 
@@ -104,7 +98,6 @@ train_mse =[]
 train_nlik = []
 val_loss_values = []
 
->>>>>>> Stashed changes
 for epoch in range(n_epoch):
     running_loss = 0
     running_mse = 0
@@ -138,11 +131,6 @@ for epoch in range(n_epoch):
         running_mse += loss1
         running_nlik += loss2
     loss_values.append(running_loss.tolist())
-<<<<<<< Updated upstream
-
-
-plt.plot((loss_values-np.min(loss_values))/(np.max(loss_values)-np.min(loss_values)), 'b-') 
-=======
     train_mse.append(running_mse.tolist())
     train_nlik.append(running_nlik.tolist())
     
@@ -190,7 +178,6 @@ plt.figure(0)
 plt.plot(loss_values, 'b-', label='Training Loss')
 plt.plot(val_loss_values, 'r-', label='Validation Loss') 
 plt.legend(loc='upper right')
->>>>>>> Stashed changes
 plt.xlabel('Iterations')
 plt.ylabel('Loss')
 plt.title('Training and Validation Loss')
@@ -320,8 +307,6 @@ time_train.to_csv("C:/Users/jgmea/OneDrive/Desktop/research/time_train1.csv", in
 
 
 
-<<<<<<< Updated upstream
-=======
 
 #             # Forward pass
 #             yhat_long, yhat_surv = model(batch_long_inp, batch_base, batch_mask_inp, obs_time[:, :-1], obs_time[:, 1:])
@@ -355,5 +340,4 @@ print(val_loss_values)
 #plt.title('Training and Validation Loss')
 #print(val_loss_values)
 #plt.savefig("val_loss.png")  # Save as PNG file
->>>>>>> Stashed changes
 
